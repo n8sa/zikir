@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="A quiet, personal daily zikir counter.">
+  <title>Zikir</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section id="homeScreen" class="screen home-screen" aria-labelledby="appTitle">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Assalamualaikum <span aria-hidden="true">🌿</span></p>
+          <h1 id="appTitle">Zikir</h1>
+        </div>
+        <button id="settingsButton" class="icon-button" type="button" aria-label="Open settings">
+          <span aria-hidden="true">⚙</span>
+        </button>
+      </header>
+
+      <section class="heatmap-card" aria-labelledby="heatmapTitle">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Your rhythm</p>
+            <h2 id="heatmapTitle">Last 12 weeks</h2>
+          </div>
+          <p id="heatmapRange" class="date-range"></p>
+        </div>
+        <div id="heatmap" class="heatmap" role="grid" aria-label="Zikir activity over the last 84 days"></div>
+        <div class="legend" aria-label="Heatmap scale from less to more activity">
+          <span>Less</span>
+          <span class="legend-cell level-0"></span><span class="legend-cell level-1"></span>
+          <span class="legend-cell level-2"></span><span class="legend-cell level-3"></span>
+          <span class="legend-cell level-4"></span><span>More</span>
+        </div>
+      </section>
+
+      <section class="today-card" aria-labelledby="todayTitle">
+        <div>
+          <p id="todayTitle" class="section-kicker">Today</p>
+          <p id="todayCount" class="today-count">0</p>
+          <p class="today-label">zikir recorded</p>
+        </div>
+        <p id="todaySessions" class="session-pill">No sessions yet</p>
+      </section>
+
+      <section class="start-area" aria-labelledby="targetTitle">
+        <p id="targetTitle" class="target-label">Choose your target</p>
+        <div id="targetOptions" class="segmented" role="radiogroup" aria-label="Session target">
+          <button type="button" data-target="33" role="radio">33</button>
+          <button type="button" data-target="100" role="radio">100</button>
+          <button type="button" data-target="free" role="radio">Free</button>
+        </div>
+        <button id="playButton" class="play-button" type="button"><span aria-hidden="true">▶</span> Play</button>
+        <p class="local-note">Your progress stays on this device.</p>
+      </section>
+    </section>
+
+    <section id="counterScreen" class="screen counter-screen" aria-label="Zikir counter" hidden>
+      <div class="counter-topbar">
+        <button id="closeCounterButton" class="text-button" type="button" aria-label="End session">Close</button>
+        <span id="counterMode" class="mode-label">Target 33</span>
+        <span class="topbar-spacer" aria-hidden="true"></span>
+      </div>
+      <button id="tapSurface" class="tap-surface" type="button" aria-label="Tap to add one zikir">
+        <span id="countDisplay" class="count-display">0</span>
+        <span id="progressText" class="progress-text">0 / 33</span>
+        <span id="completionText" class="completion-text" aria-live="polite"></span>
+        <span class="tap-hint">Tap anywhere</span>
+      </button>
+      <div class="counter-footer">
+        <button id="stopButton" class="stop-button" type="button">Stop</button>
+      </div>
+      <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+    </section>
+  </main>
+
+  <div id="backdrop" class="backdrop" hidden></div>
+
+  <section id="daySheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="daySheetTitle" hidden>
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" data-close-sheet type="button" aria-label="Close">×</button>
+    <p class="section-kicker">Daily activity</p>
+    <h2 id="daySheetTitle">23 Aug</h2>
+    <p id="daySheetTotal" class="sheet-total"></p>
+    <p id="daySheetSessions" class="sheet-detail"></p>
+  </section>
+
+  <section id="finishSheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="finishTitle" hidden>
+    <div class="sheet-handle"></div>
+    <p class="section-kicker">Session complete</p>
+    <h2 id="finishTitle">0 zikir recorded</h2>
+    <p id="finishDetail" class="sheet-detail">Take a moment before you continue.</p>
+    <button id="saveButton" class="primary-sheet-button" type="button">Save &amp; Finish</button>
+    <button id="continueButton" class="secondary-sheet-button" type="button">Continue</button>
+  </section>
+
+  <section id="settingsSheet" class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" data-close-sheet type="button" aria-label="Close">×</button>
+    <p class="section-kicker">Preferences</p>
+    <h2 id="settingsTitle">Settings</h2>
+    <div class="setting-group">
+      <span>Default target</span>
+      <div id="defaultTargetOptions" class="mini-segmented" role="radiogroup" aria-label="Default target">
+        <button type="button" data-default-target="33" role="radio">33</button>
+        <button type="button" data-default-target="100" role="radio">100</button>
+        <button type="button" data-default-target="free" role="radio">Free</button>
+      </div>
+    </div>
+    <label class="setting-row"><span><strong>Vibration</strong><small>Gentle feedback with each tap</small></span><input id="vibrationSetting" type="checkbox" role="switch"></label>
+    <label class="setting-row"><span><strong>Sound</strong><small>Quiet tones while counting</small></span><input id="soundSetting" type="checkbox" role="switch"></label>
+    <label class="setting-row"><span><strong>Stop automatically</strong><small>Finish when the target is reached</small></span><input id="autoStopSetting" type="checkbox" role="switch"></label>
+    <button id="resetButton" class="danger-button" type="button">Reset all progress</button>
+  </section>
+
+  <section id="resetSheet" class="sheet compact-sheet" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle" hidden>
+    <div class="sheet-handle"></div>
+    <p class="section-kicker">Please confirm</p>
+    <h2 id="resetTitle">Reset all progress?</h2>
+    <p class="sheet-detail">This permanently removes every saved session and cannot be undone.</p>
+    <button id="confirmResetButton" class="danger-confirm-button" type="button">Yes, reset everything</button>
+    <button id="cancelResetButton" class="secondary-sheet-button" type="button">Cancel</button>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
