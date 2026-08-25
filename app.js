@@ -4,12 +4,13 @@
   const STORAGE_KEY = "zikir-app-v1";
   const defaults = {
     history: {}, sessions: [],
-    settings: { defaultTarget: "33", vibration: true, sound: true, autoStop: false }
+    settings: { defaultTarget: "33", colour: "emerald", vibration: true, sound: true, autoStop: false }
   };
 
   const $ = (id) => document.getElementById(id);
   const els = {
-    home: $("homeScreen"), counter: $("counterScreen"), heatmap: $("heatmap"),
+    home: $("homeScreen"), counter: $("counterScreen"), heatmap: $("heatmap"), heatmapScroller: $("heatmapScroller"),
+    heatmapLeft: $("heatmapLeft"), heatmapRight: $("heatmapRight"),
     heatmapRange: $("heatmapRange"), todayCount: $("todayCount"), todaySessions: $("todaySessions"),
     targetOptions: $("targetOptions"), play: $("playButton"), settingsButton: $("settingsButton"),
     closeCounter: $("closeCounterButton"), tapSurface: $("tapSurface"), count: $("countDisplay"),
@@ -18,7 +19,7 @@
     daySheet: $("daySheet"), dayTitle: $("daySheetTitle"), dayTotal: $("daySheetTotal"), daySessions: $("daySheetSessions"),
     finishSheet: $("finishSheet"), finishTitle: $("finishTitle"), finishDetail: $("finishDetail"),
     save: $("saveButton"), continue: $("continueButton"), settingsSheet: $("settingsSheet"),
-    defaultTargets: $("defaultTargetOptions"), vibration: $("vibrationSetting"), sound: $("soundSetting"),
+    defaultTargets: $("defaultTargetOptions"), colours: $("colourOptions"), vibration: $("vibrationSetting"), sound: $("soundSetting"),
     autoStop: $("autoStopSetting"), reset: $("resetButton"), resetSheet: $("resetSheet"),
     confirmReset: $("confirmResetButton"), cancelReset: $("cancelResetButton")
   };
@@ -58,9 +59,9 @@
   function renderHeatmap() {
     els.heatmap.replaceChildren();
     const today = new Date(); today.setHours(12, 0, 0, 0);
-    const first = new Date(today); first.setDate(first.getDate() - 83);
+    const first = new Date(today); first.setDate(first.getDate() - 363);
     els.heatmapRange.textContent = `${formatDay(first)} – ${formatDay(today)}`;
-    for (let i = 0; i < 84; i += 1) {
+    for (let i = 0; i < 364; i += 1) {
       const date = new Date(first); date.setDate(first.getDate() + i);
       const key = localDateKey(date);
       const data = state.history[key] || { total: 0, sessions: 0 };
@@ -73,6 +74,7 @@
       cell.title = `${formatDay(date)} · ${data.total} zikir`;
       els.heatmap.append(cell);
     }
+    requestAnimationFrame(() => { els.heatmapScroller.scrollLeft = els.heatmapScroller.scrollWidth; });
   }
 
   function setTargetButtons(container, attribute, value) {
@@ -189,14 +191,18 @@
 
   function openSettings() {
     setTargetButtons(els.defaultTargets, "defaultTarget", state.settings.defaultTarget);
+    setTargetButtons(els.colours, "colour", state.settings.colour);
     els.vibration.checked = state.settings.vibration; els.sound.checked = state.settings.sound; els.autoStop.checked = state.settings.autoStop;
     openSheet(els.settingsSheet);
   }
   function saveSetting(name, value) { state.settings[name] = value; persist(); }
 
   els.heatmap.addEventListener("click", (event) => { const cell = event.target.closest(".heat-cell"); if (cell) showDay(cell.dataset.date); });
+  els.heatmapLeft.addEventListener("click", () => els.heatmapScroller.scrollBy({ left: -els.heatmapScroller.clientWidth * .8, behavior: "smooth" }));
+  els.heatmapRight.addEventListener("click", () => els.heatmapScroller.scrollBy({ left: els.heatmapScroller.clientWidth * .8, behavior: "smooth" }));
   els.targetOptions.addEventListener("click", (event) => { const button = event.target.closest("[data-target]"); if (!button) return; selectedTarget = button.dataset.target; saveSetting("defaultTarget", selectedTarget); setTargetButtons(els.targetOptions, "target", selectedTarget); });
   els.defaultTargets.addEventListener("click", (event) => { const button = event.target.closest("[data-default-target]"); if (!button) return; selectedTarget = button.dataset.defaultTarget; saveSetting("defaultTarget", selectedTarget); setTargetButtons(els.defaultTargets, "defaultTarget", selectedTarget); setTargetButtons(els.targetOptions, "target", selectedTarget); });
+  els.colours.addEventListener("click", (event) => { const button = event.target.closest("[data-colour]"); if (!button) return; saveSetting("colour", button.dataset.colour); document.body.dataset.colour = button.dataset.colour; setTargetButtons(els.colours, "colour", button.dataset.colour); });
   els.play.addEventListener("click", startSession);
   els.tapSurface.addEventListener("click", increment);
   els.stop.addEventListener("click", (event) => { event.stopPropagation(); requestFinish(); });
@@ -209,10 +215,11 @@
   els.autoStop.addEventListener("change", () => saveSetting("autoStop", els.autoStop.checked));
   els.reset.addEventListener("click", () => openSheet(els.resetSheet));
   els.cancelReset.addEventListener("click", openSettings);
-  els.confirmReset.addEventListener("click", () => { state = JSON.parse(JSON.stringify(defaults)); selectedTarget = "33"; persist(); closeSheet(); renderHome(); });
+  els.confirmReset.addEventListener("click", () => { state = JSON.parse(JSON.stringify(defaults)); selectedTarget = "33"; document.body.dataset.colour = state.settings.colour; persist(); closeSheet(); renderHome(); });
   els.backdrop.addEventListener("click", () => { if (activeSheet === els.finishSheet) return; closeSheet(); });
   document.querySelectorAll("[data-close-sheet]").forEach((button) => button.addEventListener("click", closeSheet));
   document.addEventListener("keydown", (event) => { if (event.key === "Escape" && activeSheet && activeSheet !== els.finishSheet) closeSheet(); });
 
+  document.body.dataset.colour = state.settings.colour;
   renderHome();
 })();

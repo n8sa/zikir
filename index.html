@@ -4,8 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
   <meta name="theme-color" content="#0d1117">
-  <meta name="description" content="A quiet, personal daily zikir counter.">
-  <title>Zikir</title>
+  <title>Kira Zikir — Daily Zikir Counter &amp; Tracker</title>
+  <meta name="description" content="Kira Zikir is a simple, peaceful daily zikir counter with personal targets, session tracking, and a visual consistency heatmap.">
+  <meta name="keywords" content="zikir counter, kira zikir, tasbih counter, digital tasbih, daily zikir, dhikr counter, zikir tracker">
+  <meta name="author" content="Kira Zikir">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kira Zikir">
+  <meta property="og:title" content="Kira Zikir — Daily Zikir Counter &amp; Tracker">
+  <meta property="og:description" content="Count your daily zikir, follow personal targets, and reflect on your consistency with a calm visual heatmap.">
+  <meta property="og:locale" content="en_MY">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Kira Zikir — Daily Zikir Counter &amp; Tracker">
+  <meta name="twitter:description" content="A quiet, personal daily zikir counter and consistency tracker.">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Kira Zikir",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Any",
+      "description": "A simple daily zikir counter with personal targets, local session history, and a visual consistency heatmap.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "MYR"
+      }
+    }
+  </script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,7 +44,7 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">Assalamualaikum <span aria-hidden="true">🌿</span></p>
-          <h1 id="appTitle">Zikir</h1>
+          <div class="title-row"><h1 id="appTitle">Kira Zikir</h1><span class="beta-badge">Beta testing</span></div>
         </div>
         <button id="settingsButton" class="icon-button" type="button" aria-label="Open settings">
           <span aria-hidden="true">⚙</span>
@@ -25,11 +55,17 @@
         <div class="section-heading">
           <div>
             <p class="section-kicker">Your rhythm</p>
-            <h2 id="heatmapTitle">Last 12 weeks</h2>
+            <h2 id="heatmapTitle">Your year</h2>
           </div>
-          <p id="heatmapRange" class="date-range"></p>
+          <div class="heatmap-nav" aria-label="Move through activity history">
+            <button id="heatmapLeft" type="button" aria-label="Scroll heatmap left">‹</button>
+            <button id="heatmapRight" type="button" aria-label="Scroll heatmap right">›</button>
+          </div>
         </div>
-        <div id="heatmap" class="heatmap" role="grid" aria-label="Zikir activity over the last 84 days"></div>
+        <div id="heatmapScroller" class="heatmap-scroller" tabindex="0" aria-label="Scrollable zikir activity history">
+          <div id="heatmap" class="heatmap" role="grid" aria-label="Zikir activity over the last year"></div>
+        </div>
+        <p id="heatmapRange" class="date-range"></p>
         <div class="legend" aria-label="Heatmap scale from less to more activity">
           <span>Less</span>
           <span class="legend-cell level-0"></span><span class="legend-cell level-1"></span>
@@ -103,6 +139,15 @@
     <button class="sheet-close" data-close-sheet type="button" aria-label="Close">×</button>
     <p class="section-kicker">Preferences</p>
     <h2 id="settingsTitle">Settings</h2>
+    <div class="setting-group colour-group">
+      <span>App colour</span>
+      <div id="colourOptions" class="colour-options" role="radiogroup" aria-label="App colour">
+        <button type="button" data-colour="emerald" role="radio" aria-label="Emerald"><span style="--swatch:#39d353"></span>Emerald</button>
+        <button type="button" data-colour="ocean" role="radio" aria-label="Ocean"><span style="--swatch:#58a6ff"></span>Ocean</button>
+        <button type="button" data-colour="amber" role="radio" aria-label="Amber"><span style="--swatch:#e3b341"></span>Amber</button>
+        <button type="button" data-colour="violet" role="radio" aria-label="Violet"><span style="--swatch:#bc8cff"></span>Violet</button>
+      </div>
+    </div>
     <div class="setting-group">
       <span>Default target</span>
       <div id="defaultTargetOptions" class="mini-segmented" role="radiogroup" aria-label="Default target">
